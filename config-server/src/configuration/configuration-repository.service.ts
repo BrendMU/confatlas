@@ -26,9 +26,7 @@ export class ConfigurationRepository {
 
         const configurationMetadata = new this.configurationMetadataModel({
             path,
-            parent: parent
-                ? new mongoose.Schema.Types.ObjectId(parent)
-                : undefined,
+            parent: parent ? new mongoose.Types.ObjectId(parent) : undefined,
             current: configurationObject._id,
         });
 
