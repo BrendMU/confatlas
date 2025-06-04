@@ -10,7 +10,7 @@ export class ConfigurationMetadata {
         type: Types.ObjectId,
         ref: 'ConfigurationMetadata',
     })
-    parent: string = '';
+    parent?: string = '';
 
     @Prop({ required: true, type: Types.ObjectId, ref: 'Configuration' })
     current: string = '';

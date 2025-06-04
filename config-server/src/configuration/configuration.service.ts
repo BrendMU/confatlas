@@ -11,4 +11,14 @@ export class ConfigurationService {
     ): Promise<void> {
         this.configurationRepository.createNewConfiguration(configuration);
     }
+
+    public async getConfiguration(
+        id: string,
+        includeParents = true,
+    ): Promise<unknown> {
+        return this.configurationRepository.getConfiguration(
+            id,
+            includeParents,
+        );
+    }
 }

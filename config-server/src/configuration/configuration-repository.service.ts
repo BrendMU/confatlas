@@ -4,6 +4,7 @@ import { ConfigurationMetadata } from '../schemas';
 import { Configuration } from '../schemas';
 import { CreateConfiguration } from '../types';
 import { InjectModel } from '@nestjs/mongoose';
+import { merge } from 'lodash';
 
 @Injectable()
 export class ConfigurationRepository {
@@ -34,5 +35,35 @@ export class ConfigurationRepository {
 
         await configurationObject.save();
         await configurationMetadata.save();
+    }
+
+    public async getConfiguration(
+        id: string,
+        includeParents = true,
+    ): Promise<unknown> {
+        return this.fetchConfigurationObject(id, includeParents);
+    }
+
+    private async fetchConfigurationObject(
+        id: string,
+        includingParents = true,
+    ): Promise<unknown> {
+        const metadata = await this.configurationMetadataModel.findById(id);
+
+        if (!metadata) throw new Error('The provided id was not found');
+
+        const configurationId = metadata.current;
+        const configuration =
+            await this.configurationModel.findById(configurationId);
+        const parentId = metadata.parent;
+
+        if (parentId && includingParents) {
+            const parentConfiguration =
+                await this.fetchConfigurationObject(parentId);
+
+            return merge(parentConfiguration, configuration?.configuration);
+        }
+
+        return configuration?.configuration;
     }
 }
